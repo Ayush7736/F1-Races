@@ -2,15 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-
-
-
     <title>Dash</title>
-<link rel="icon" href="icon.png">
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css?family=Press+Start+2P"
-    />
+    <link rel="icon" href="icon.png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Press+Start+2P" />
 
     <style>
       body {
@@ -23,7 +17,7 @@
       /* UI */
       .topUI {
         position: absolute;
-        z-index: 1000; /* need this cause clip-path changes stack context */
+        z-index: 1000;
         transform: translate(-50%, 25px);
         text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
         letter-spacing: 2px;
@@ -106,8 +100,8 @@
         image-rendering: pixelated;
       }
       #hero {
-        background-repeat: no-repeat;
-        background-position: -110px 0;
+        background: #ff0000; /* Red colored hero as fallback */
+        border: 2px solid #fff;
         z-index: 2000;
         transform: scale(1.4);
       }
@@ -131,8 +125,7 @@
         color: #fff;
         width: 100%;
         height: 100%;
-
-        z-index: 1000; /* need this cause clip-path changes stack context */
+        z-index: 1000;
       }
 
       #highscore {
@@ -155,7 +148,6 @@
         top: 25%;
         transform: translate(-50%, -50%);
         font-size: 5em;
-
         background: -webkit-linear-gradient(#25d8b1, #e2bbf0);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -244,9 +236,8 @@
       <span><span>&lt;</span><span>&gt;</span>move</span>
       <span><span>&lt;</span><span>&gt;</span>accelerate</span>
     </div>
-    <script src="javascript/1.js"></script>
 
-    <script id="rendered-js">
+    <script>
       // ------------------------------------------------------------
       // assets
       // ------------------------------------------------------------
@@ -290,10 +281,8 @@
         },
 
         AUDIO: {
-          theme:
-            "https://s3-us-west-2.amazonaws.com/s.cdpn.io/155629/theme.mp3",
-          engine:
-            "https://s3-us-west-2.amazonaws.com/s.cdpn.io/155629/engine.wav",
+          theme: "https://s3-us-west-2.amazonaws.com/s.cdpn.io/155629/theme.mp3",
+          engine: "https://s3-us-west-2.amazonaws.com/s.cdpn.io/155629/engine.wav",
           honk: "https://s3-us-west-2.amazonaws.com/s.cdpn.io/155629/honk.wav",
           beep: "https://s3-us-west-2.amazonaws.com/s.cdpn.io/155629/beep.wav",
         },
@@ -486,7 +475,7 @@
       }
 
       // ------------------------------------------------------------
-      // global varriables
+      // global variables
       // ------------------------------------------------------------
 
       const highscores = [];
@@ -668,12 +657,13 @@
         playerX -= (lines[startPos].curve / 5000) * step * speed;
 
         if (KEYS.ArrowRight)
-          (hero.style.backgroundPosition = "-220px 0"),
-            (playerX += 0.007 * step * speed);
+          (hero.style.background = "#00ff00"), // Green for right
+          (playerX += 0.007 * step * speed);
         else if (KEYS.ArrowLeft)
-          (hero.style.backgroundPosition = "0 0"),
-            (playerX -= 0.007 * step * speed);
-        else hero.style.backgroundPosition = "-110px 0";
+          (hero.style.background = "#0000ff"), // Blue for left
+          (playerX -= 0.007 * step * speed);
+        else
+          (hero.style.background = "#ff0000"); // Red for center
 
         playerX = playerX.clamp(-3, 3);
 
@@ -916,9 +906,10 @@
 
         hero.style.top = height - 80 + "px";
         hero.style.left = halfWidth - ASSETS.IMAGE.HERO.width / 2 + "px";
-        hero.style.background = `url(${ASSETS.IMAGE.HERO.src})`;
+        // REMOVED: hero.style.background = `url(${ASSETS.IMAGE.HERO.src})`;
         hero.style.width = `${ASSETS.IMAGE.HERO.width}px`;
         hero.style.height = `${ASSETS.IMAGE.HERO.height}px`;
+        hero.style.background = "#ff0000"; // Default red color
 
         cloud.style.backgroundImage = `url(${ASSETS.IMAGE.SKY.src})`;
 
@@ -971,8 +962,6 @@
       }
 
       init();
-      //# sourceURL=pen.js
     </script>
-    <script src="javascript/null.js"></script>
   </body>
 </html>

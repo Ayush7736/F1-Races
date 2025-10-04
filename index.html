@@ -2,9 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+
+
+
     <title>Dash</title>
-    <link rel="icon" href="icon.png">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Press+Start+2P" />
+<link rel="icon" href="icon.png">
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Press+Start+2P"
+    />
 
     <style>
       body {
@@ -17,7 +23,7 @@
       /* UI */
       .topUI {
         position: absolute;
-        z-index: 1000;
+        z-index: 1000; /* need this cause clip-path changes stack context */
         transform: translate(-50%, 25px);
         text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
         letter-spacing: 2px;
@@ -100,65 +106,11 @@
         image-rendering: pixelated;
       }
       #hero {
-        background: transparent !important;
-        border: none !important;
+        background-repeat: no-repeat;
+        background-position: -110px 0;
         z-index: 2000;
         transform: scale(1.4);
-        position: relative;
       }
-
-      /* Simple car sprite overlay - now the main visible element */
-      .car-sprite {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 80%;
-        height: 60%;
-        background: #333;
-        border-radius: 10px 10px 5px 5px;
-        transition: transform 0.2s;
-      }
-
-      .car-sprite::before {
-        content: '';
-        position: absolute;
-        top: -25%;
-        left: 10%;
-        width: 80%;
-        height: 40%;
-        background: #555;
-        border-radius: 5px 5px 0 0;
-      }
-
-      .car-sprite::after {
-        content: '';
-        position: absolute;
-        bottom: 5%;
-        left: 5%;
-        width: 90%;
-        height: 15%;
-        background: #222;
-        border-radius: 3px;
-      }
-
-      .wheel {
-        position: absolute;
-        width: 15%;
-        height: 25%;
-        background: #000;
-        border-radius: 50%;
-        bottom: -5%;
-      }
-
-      .wheel.left {
-        left: 10%;
-      }
-
-      .wheel.right {
-        right: 10%;
-      }
-
       #cloud {
         background-size: auto 100%;
         width: 100%;
@@ -179,7 +131,8 @@
         color: #fff;
         width: 100%;
         height: 100%;
-        z-index: 1000;
+
+        z-index: 1000; /* need this cause clip-path changes stack context */
       }
 
       #highscore {
@@ -202,6 +155,7 @@
         top: 25%;
         transform: translate(-50%, -50%);
         font-size: 5em;
+
         background: -webkit-linear-gradient(#25d8b1, #e2bbf0);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -290,8 +244,9 @@
       <span><span>&lt;</span><span>&gt;</span>move</span>
       <span><span>&lt;</span><span>&gt;</span>accelerate</span>
     </div>
+    <script src="javascript/1.js"></script>
 
-    <script>
+    <script id="rendered-js">
       // ------------------------------------------------------------
       // assets
       // ------------------------------------------------------------
@@ -335,8 +290,10 @@
         },
 
         AUDIO: {
-          theme: "https://s3-us-west-2.amazonaws.com/s.cdpn.io/155629/theme.mp3",
-          engine: "https://s3-us-west-2.amazonaws.com/s.cdpn.io/155629/engine.wav",
+          theme:
+            "https://s3-us-west-2.amazonaws.com/s.cdpn.io/155629/theme.mp3",
+          engine:
+            "https://s3-us-west-2.amazonaws.com/s.cdpn.io/155629/engine.wav",
           honk: "https://s3-us-west-2.amazonaws.com/s.cdpn.io/155629/honk.wav",
           beep: "https://s3-us-west-2.amazonaws.com/s.cdpn.io/155629/beep.wav",
         },
@@ -529,7 +486,7 @@
       }
 
       // ------------------------------------------------------------
-      // global variables
+      // global varriables
       // ------------------------------------------------------------
 
       const highscores = [];
@@ -565,7 +522,6 @@
       const targetFrameRate = 1000 / 25; // in ms
 
       let audio;
-      let carSprite; // Global reference to car sprite
 
       // game
       let inGame,
@@ -711,15 +667,13 @@
         // left / right position
         playerX -= (lines[startPos].curve / 5000) * step * speed;
 
-        if (KEYS.ArrowRight) {
-          carSprite.style.transform = "translate(-50%, -50%) rotate(15deg)";
-          playerX += 0.007 * step * speed;
-        } else if (KEYS.ArrowLeft) {
-          carSprite.style.transform = "translate(-50%, -50%) rotate(-15deg)";
-          playerX -= 0.007 * step * speed;
-        } else {
-          carSprite.style.transform = "translate(-50%, -50%) rotate(0deg)";
-        }
+        if (KEYS.ArrowRight)
+          (hero.style.backgroundPosition = "-220px 0"),
+            (playerX += 0.007 * step * speed);
+        else if (KEYS.ArrowLeft)
+          (hero.style.backgroundPosition = "0 0"),
+            (playerX -= 0.007 * step * speed);
+        else hero.style.backgroundPosition = "-110px 0";
 
         playerX = playerX.clamp(-3, 3);
 
@@ -962,23 +916,9 @@
 
         hero.style.top = height - 80 + "px";
         hero.style.left = halfWidth - ASSETS.IMAGE.HERO.width / 2 + "px";
+        hero.style.background = `url(${ASSETS.IMAGE.HERO.src})`;
         hero.style.width = `${ASSETS.IMAGE.HERO.width}px`;
         hero.style.height = `${ASSETS.IMAGE.HERO.height}px`;
-        hero.style.background = "transparent"; // Make box invisible
-
-        // Create car sprite overlay - this is now the only visible element
-        carSprite = document.createElement('div');
-        carSprite.className = 'car-sprite';
-        
-        const wheelLeft = document.createElement('div');
-        wheelLeft.className = 'wheel left';
-        
-        const wheelRight = document.createElement('div');
-        wheelRight.className = 'wheel right';
-        
-        carSprite.appendChild(wheelLeft);
-        carSprite.appendChild(wheelRight);
-        hero.appendChild(carSprite);
 
         cloud.style.backgroundImage = `url(${ASSETS.IMAGE.SKY.src})`;
 
@@ -1017,45 +957,22 @@
         reset();
 
         // START GAME LOOP
-// Add car sprite (player car)
-carSprite = document.createElement("div");
-carSprite.classList.add("car-sprite");
-hero.appendChild(carSprite);
+        (function loop() {
+          requestAnimationFrame(loop);
 
-// Wheels
-const leftWheel = document.createElement("div");
-leftWheel.classList.add("wheel", "left");
-carSprite.appendChild(leftWheel);
+          let now = timestamp();
+          let delta = now - then;
 
-const rightWheel = document.createElement("div");
-rightWheel.classList.add("wheel", "right");
-carSprite.appendChild(rightWheel);
+          if (delta > targetFrameRate) {
+            then = now - (delta % targetFrameRate);
+            update(delta / 1000);
+          }
+        })();
+      }
 
-// Create lines for road segments
-for (let i = 0; i < N; i++) {
-  let line = new Line();
-  line.z = i * segL;
-  for (let j = 0; j < 7; j++) {
-    let e = document.createElement("div");
-    road.appendChild(e);
-    line.elements.push(e);
-  }
-  lines.push(line);
-}
-
-// Add enemy cars
-for (let i = 0; i < 6; i++) {
-  let type = ASSETS.IMAGE.CAR;
-  let lane = randomProperty(LANE);
-  let pos = getRand(0, N);
-  cars.push(new Car(pos, type, lane));
-}
-
-// Sky background
-cloud.style.background = `url(${ASSETS.IMAGE.SKY.src}) repeat-x`;
-
-// Initialize audio
-audio = new Audio();
-
-// Now start the loop below
-
+      init();
+      //# sourceURL=pen.js
+    </script>
+    <script src="javascript/null.js"></script>
+  </body>
+</html>

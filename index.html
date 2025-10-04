@@ -104,9 +104,59 @@
         border: none !important;
         z-index: 2000;
         transform: scale(1.4);
-        background-image: url('images/hero.png') !important;
-        background-repeat: no-repeat;
-        background-position: -110px 0;
+        position: relative;
+      }
+
+      /* Simple car sprite overlay - now the main visible element */
+      .car-sprite {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        height: 60%;
+        background: #333;
+        border-radius: 10px 10px 5px 5px;
+        transition: transform 0.2s;
+      }
+
+      .car-sprite::before {
+        content: '';
+        position: absolute;
+        top: -25%;
+        left: 10%;
+        width: 80%;
+        height: 40%;
+        background: #555;
+        border-radius: 5px 5px 0 0;
+      }
+
+      .car-sprite::after {
+        content: '';
+        position: absolute;
+        bottom: 5%;
+        left: 5%;
+        width: 90%;
+        height: 15%;
+        background: #222;
+        border-radius: 3px;
+      }
+
+      .wheel {
+        position: absolute;
+        width: 15%;
+        height: 25%;
+        background: #000;
+        border-radius: 50%;
+        bottom: -5%;
+      }
+
+      .wheel.left {
+        left: 10%;
+      }
+
+      .wheel.right {
+        right: 10%;
       }
 
       #cloud {
@@ -515,6 +565,7 @@
       const targetFrameRate = 1000 / 25; // in ms
 
       let audio;
+      let carSprite; // Global reference to car sprite
 
       // game
       let inGame,
@@ -661,13 +712,13 @@
         playerX -= (lines[startPos].curve / 5000) * step * speed;
 
         if (KEYS.ArrowRight) {
-          hero.style.backgroundPosition = "-220px 0";
+          carSprite.style.transform = "translate(-50%, -50%) rotate(15deg)";
           playerX += 0.007 * step * speed;
         } else if (KEYS.ArrowLeft) {
-          hero.style.backgroundPosition = "0px 0";
+          carSprite.style.transform = "translate(-50%, -50%) rotate(-15deg)";
           playerX -= 0.007 * step * speed;
         } else {
-          hero.style.backgroundPosition = "-110px 0";
+          carSprite.style.transform = "translate(-50%, -50%) rotate(0deg)";
         }
 
         playerX = playerX.clamp(-3, 3);
@@ -913,10 +964,21 @@
         hero.style.left = halfWidth - ASSETS.IMAGE.HERO.width / 2 + "px";
         hero.style.width = `${ASSETS.IMAGE.HERO.width}px`;
         hero.style.height = `${ASSETS.IMAGE.HERO.height}px`;
-        hero.style.background = "transparent";
-        hero.style.backgroundImage = `url('${ASSETS.IMAGE.HERO.src}')`;
-        hero.style.backgroundRepeat = 'no-repeat';
-        hero.style.backgroundPosition = '-110px 0';
+        hero.style.background = "transparent"; // Make box invisible
+
+        // Create car sprite overlay - this is now the only visible element
+        carSprite = document.createElement('div');
+        carSprite.className = 'car-sprite';
+        
+        const wheelLeft = document.createElement('div');
+        wheelLeft.className = 'wheel left';
+        
+        const wheelRight = document.createElement('div');
+        wheelRight.className = 'wheel right';
+        
+        carSprite.appendChild(wheelLeft);
+        carSprite.appendChild(wheelRight);
+        hero.appendChild(carSprite);
 
         cloud.style.backgroundImage = `url(${ASSETS.IMAGE.SKY.src})`;
 

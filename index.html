@@ -1017,20 +1017,45 @@
         reset();
 
         // START GAME LOOP
-        (function loop() {
-          requestAnimationFrame(loop);
+// Add car sprite (player car)
+carSprite = document.createElement("div");
+carSprite.classList.add("car-sprite");
+hero.appendChild(carSprite);
 
-          let now = timestamp();
-          let delta = now - then;
+// Wheels
+const leftWheel = document.createElement("div");
+leftWheel.classList.add("wheel", "left");
+carSprite.appendChild(leftWheel);
 
-          if (delta > targetFrameRate) {
-            then = now - (delta % targetFrameRate);
-            update(delta / 1000);
-          }
-        })();
-      }
+const rightWheel = document.createElement("div");
+rightWheel.classList.add("wheel", "right");
+carSprite.appendChild(rightWheel);
 
-      init();
-    </script>
-  </body>
-</html>
+// Create lines for road segments
+for (let i = 0; i < N; i++) {
+  let line = new Line();
+  line.z = i * segL;
+  for (let j = 0; j < 7; j++) {
+    let e = document.createElement("div");
+    road.appendChild(e);
+    line.elements.push(e);
+  }
+  lines.push(line);
+}
+
+// Add enemy cars
+for (let i = 0; i < 6; i++) {
+  let type = ASSETS.IMAGE.CAR;
+  let lane = randomProperty(LANE);
+  let pos = getRand(0, N);
+  cars.push(new Car(pos, type, lane));
+}
+
+// Sky background
+cloud.style.background = `url(${ASSETS.IMAGE.SKY.src}) repeat-x`;
+
+// Initialize audio
+audio = new Audio();
+
+// Now start the loop below
+

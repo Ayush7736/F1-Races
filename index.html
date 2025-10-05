@@ -242,6 +242,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
             user-select: none;
             touch-action: manipulation;
+            font-family: "Press Start 2P", monospace;
         }
 
         .control-btn:active {
@@ -249,12 +250,67 @@
             transform: scale(0.95);
         }
 
+        .steering-btn {
+            background: rgba(255, 255, 100, 0.7);
+            border-color: #f4f430;
+        }
+
         .accelerate-btn {
+            background: rgba(100, 255, 100, 0.7);
+            border-color: #25d8b1;
+        }
+
+        .brake-btn {
             background: rgba(255, 100, 100, 0.7);
             border-color: #e62e13;
         }
 
-        .brake-btn {
+        .action-btn {
+            background: rgba(200, 100, 255, 0.7);
+            border-color: #a61a9d;
+        }
+
+        /* Mobile Menu Buttons */
+        #mobile-menu {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            z-index: 3000;
+            pointer-events: none;
+        }
+
+        .menu-btn {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            font-size: 20px;
+            color: #333;
+            border: 3px solid #7dd8c9;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            user-select: none;
+            touch-action: manipulation;
+            pointer-events: auto;
+            font-family: "Press Start 2P", monospace;
+        }
+
+        .menu-btn:active {
+            background: rgba(200, 200, 200, 0.9);
+            transform: scale(0.95);
+        }
+
+        .coin-btn {
+            background: rgba(255, 215, 0, 0.7);
+            border-color: #ffd700;
+        }
+
+        .mute-btn {
             background: rgba(100, 100, 255, 0.7);
             border-color: #0082df;
         }
@@ -264,6 +320,12 @@
                 width: 50px;
                 height: 50px;
                 font-size: 20px;
+            }
+            
+            .menu-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
             }
             
             #controls {
@@ -280,6 +342,12 @@
                 width: 45px;
                 height: 45px;
                 font-size: 18px;
+            }
+            
+            .menu-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
             }
             
             #controls {
@@ -314,17 +382,18 @@
             <div id="highscore"></div>
         </div>
         
+        <!-- Mobile Menu Buttons -->
+        <div id="mobile-menu">
+            <div class="menu-btn coin-btn" id="coin-btn">C</div>
+            <div class="menu-btn mute-btn" id="mute-btn">M</div>
+        </div>
+        
         <!-- Mobile Controls -->
         <div id="mobile-controls">
             <div class="control-group">
                 <div class="control-row">
-                    <div class="control-btn" id="left-btn">←</div>
-                </div>
-                <div class="control-row">
-                    <div class="control-btn" id="up-btn">↑</div>
-                </div>
-                <div class="control-row">
-                    <div class="control-btn" id="right-btn">→</div>
+                    <div class="control-btn steering-btn" id="left-btn">X</div>
+                    <div class="control-btn steering-btn" id="right-btn">L</div>
                 </div>
             </div>
             <div class="control-group">
@@ -341,8 +410,8 @@
     <div id="controls">
         <span><span>C</span>insert coin</span>
         <span><span>M</span>mute</span>
-        <span><span>&lt;</span><span>&gt;</span> or <span>A</span><span>D</span> move</span>
-        <span><span>&lt;</span><span>&gt;</span> or <span>W</span><span>S</span> accelerate</span>
+        <span><span>&lt;</span><span>&gt;</span> or <span>A</span><span>D</span> or <span>X</span><span>L</span> move</span>
+        <span><span>&lt;</span><span>&gt;</span> or <span>W</span><span>S</span> or <span>A</span><span>B</span> accelerate</span>
     </div>
 
     <script>
@@ -455,119 +524,181 @@
         function setupMobileControls() {
             const leftBtn = document.getElementById('left-btn');
             const rightBtn = document.getElementById('right-btn');
-            const upBtn = document.getElementById('up-btn');
             const accelerateBtn = document.getElementById('accelerate-btn');
             const brakeBtn = document.getElementById('brake-btn');
+            const coinBtn = document.getElementById('coin-btn');
+            const muteBtn = document.getElementById('mute-btn');
             
             // Touch start events
             leftBtn.addEventListener('touchstart', (e) => {
                 KEYS['ArrowLeft'] = true;
+                KEYS['KeyA'] = true;
                 e.preventDefault();
             });
             
             rightBtn.addEventListener('touchstart', (e) => {
                 KEYS['ArrowRight'] = true;
-                e.preventDefault();
-            });
-            
-            upBtn.addEventListener('touchstart', (e) => {
-                KEYS['ArrowUp'] = true;
+                KEYS['KeyD'] = true;
                 e.preventDefault();
             });
             
             accelerateBtn.addEventListener('touchstart', (e) => {
                 KEYS['ArrowUp'] = true;
+                KEYS['KeyW'] = true;
                 e.preventDefault();
             });
             
             brakeBtn.addEventListener('touchstart', (e) => {
                 KEYS['ArrowDown'] = true;
+                KEYS['KeyS'] = true;
                 e.preventDefault();
             });
             
             // Touch end events
             leftBtn.addEventListener('touchend', (e) => {
                 KEYS['ArrowLeft'] = false;
+                KEYS['KeyA'] = false;
                 e.preventDefault();
             });
             
             rightBtn.addEventListener('touchend', (e) => {
                 KEYS['ArrowRight'] = false;
-                e.preventDefault();
-            });
-            
-            upBtn.addEventListener('touchend', (e) => {
-                KEYS['ArrowUp'] = false;
+                KEYS['KeyD'] = false;
                 e.preventDefault();
             });
             
             accelerateBtn.addEventListener('touchend', (e) => {
                 KEYS['ArrowUp'] = false;
+                KEYS['KeyW'] = false;
                 e.preventDefault();
             });
             
             brakeBtn.addEventListener('touchend', (e) => {
                 KEYS['ArrowDown'] = false;
+                KEYS['KeyS'] = false;
+                e.preventDefault();
+            });
+            
+            // Coin button
+            coinBtn.addEventListener('touchstart', (e) => {
+                if (!inGame) {
+                    insertCoin();
+                }
+                e.preventDefault();
+            });
+            
+            // Mute button
+            let muted = false;
+            muteBtn.addEventListener('touchstart', (e) => {
+                muted = !muted;
+                audio.volume = muted ? 0 : 1;
+                muteBtn.style.background = muted ? 
+                    'rgba(150, 150, 150, 0.7)' : 
+                    'rgba(100, 100, 255, 0.7)';
                 e.preventDefault();
             });
             
             // Mouse events for testing on desktop
             leftBtn.addEventListener('mousedown', (e) => {
                 KEYS['ArrowLeft'] = true;
+                KEYS['KeyA'] = true;
                 e.preventDefault();
             });
             
             rightBtn.addEventListener('mousedown', (e) => {
                 KEYS['ArrowRight'] = true;
-                e.preventDefault();
-            });
-            
-            upBtn.addEventListener('mousedown', (e) => {
-                KEYS['ArrowUp'] = true;
+                KEYS['KeyD'] = true;
                 e.preventDefault();
             });
             
             accelerateBtn.addEventListener('mousedown', (e) => {
                 KEYS['ArrowUp'] = true;
+                KEYS['KeyW'] = true;
                 e.preventDefault();
             });
             
             brakeBtn.addEventListener('mousedown', (e) => {
                 KEYS['ArrowDown'] = true;
+                KEYS['KeyS'] = true;
                 e.preventDefault();
             });
             
             leftBtn.addEventListener('mouseup', (e) => {
                 KEYS['ArrowLeft'] = false;
+                KEYS['KeyA'] = false;
                 e.preventDefault();
             });
             
             rightBtn.addEventListener('mouseup', (e) => {
                 KEYS['ArrowRight'] = false;
-                e.preventDefault();
-            });
-            
-            upBtn.addEventListener('mouseup', (e) => {
-                KEYS['ArrowUp'] = false;
+                KEYS['KeyD'] = false;
                 e.preventDefault();
             });
             
             accelerateBtn.addEventListener('mouseup', (e) => {
                 KEYS['ArrowUp'] = false;
+                KEYS['KeyW'] = false;
                 e.preventDefault();
             });
             
             brakeBtn.addEventListener('mouseup', (e) => {
                 KEYS['ArrowDown'] = false;
+                KEYS['KeyS'] = false;
+                e.preventDefault();
+            });
+            
+            coinBtn.addEventListener('mousedown', (e) => {
+                if (!inGame) {
+                    insertCoin();
+                }
+                e.preventDefault();
+            });
+            
+            muteBtn.addEventListener('mousedown', (e) => {
+                muted = !muted;
+                audio.volume = muted ? 0 : 1;
+                muteBtn.style.background = muted ? 
+                    'rgba(150, 150, 150, 0.7)' : 
+                    'rgba(100, 100, 255, 0.7)';
                 e.preventDefault();
             });
             
             // Prevent context menu on long press
             document.addEventListener('contextmenu', (e) => {
-                if (e.target.classList.contains('control-btn')) {
+                if (e.target.classList.contains('control-btn') || 
+                    e.target.classList.contains('menu-btn')) {
                     e.preventDefault();
                 }
             });
+        }
+
+        // Insert coin function for mobile
+        function insertCoin() {
+            sleep(0)
+                .then((_) => {
+                    text.classList.remove("blink");
+                    text.innerText = 3;
+                    audio.play("beep");
+                    return sleep(1000);
+                })
+                .then((_) => {
+                    text.innerText = 2;
+                    audio.play("beep");
+                    return sleep(1000);
+                })
+                .then((_) => {
+                    reset();
+
+                    home.style.display = "none";
+
+                    road.style.opacity = 1;
+                    hero.style.display = "block";
+                    hud.style.display = "block";
+
+                    audio.play("beep", 500);
+
+                    inGame = true;
+                });
         }
 
         function sleep(ms) {
@@ -830,32 +961,7 @@
 
                 if (inGame) return;
 
-                sleep(0)
-                    .then((_) => {
-                        text.classList.remove("blink");
-                        text.innerText = 3;
-                        audio.play("beep");
-                        return sleep(1000);
-                    })
-                    .then((_) => {
-                        text.innerText = 2;
-                        audio.play("beep");
-                        return sleep(1000);
-                    })
-                    .then((_) => {
-                        reset();
-
-                        home.style.display = "none";
-
-                        road.style.opacity = 1;
-                        hero.style.display = "block";
-                        hud.style.display = "block";
-
-                        audio.play("beep", 500);
-
-                        inGame = true;
-                    });
-
+                insertCoin();
                 return;
             }
 
